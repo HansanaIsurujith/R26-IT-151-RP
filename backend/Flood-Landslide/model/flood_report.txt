@@ -1,0 +1,54 @@
+
+Suraksha Lanka — Flood Risk Model Training Report (v3)
+Project  : R26-IT-151
+Student  : IT22294470
+==================================================
+Dataset       : gampaha_unosat_dataset.csv
+Model         : Binary XGBoost (Flood vs No Flood)
+Total Rows    : 9334
+Features used : ['latitude', 'longitude', 'rainfall_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh', 'elevation_m', 'soil_type']
+
+Fix applied   : Split before augmentation + stronger regularization
+Test set      : Original data only (no augmented rows)
+
+Test Accuracy    : 88.54%
+ROC-AUC Score    : 0.9638
+CV Mean Accuracy : 91.95% +/- 0.96%
+
+XGBoost Parameters (v3 — stronger regularization):
+  n_estimators     = 150
+  max_depth        = 2
+  learning_rate    = 0.05
+  gamma            = 8.0
+  min_child_weight = 25
+  subsample        = 0.6
+  colsample_bytree = 0.6
+  reg_alpha        = 2.0
+  reg_lambda       = 8.0
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    No Flood       0.99      0.86      0.92      1437
+       Flood       0.68      0.97      0.80       430
+
+    accuracy                           0.89      1867
+   macro avg       0.83      0.91      0.86      1867
+weighted avg       0.92      0.89      0.89      1867
+
+
+Confusion Matrix:
+                 Pred No Flood  Pred Flood
+Actual No Flood           1238         199
+Actual Flood                15         415
+
+Feature Importance:
+       feature  importance
+   elevation_m    0.243296
+     longitude    0.169712
+   rainfall_mm    0.147586
+      latitude    0.125762
+     soil_type    0.092817
+wind_speed_kmh    0.086609
+  humidity_pct    0.082024
+ temperature_c    0.052194

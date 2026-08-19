@@ -1,0 +1,55 @@
+
+Suraksha Lanka — Landslide Risk Model Training Report (v3)
+Project  : R26-IT-151
+Student  : IT22294470
+==================================================
+Dataset       : gampaha_unosat_dataset.csv
+Model         : Binary XGBoost (Landslide vs No Landslide)
+Total Rows    : 9334
+Features used : ['latitude', 'longitude', 'rainfall_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh', 'elevation_m', 'soil_type', 'river_proximity_km']
+
+Fix applied   : Split before augmentation + stronger regularization
+Test set      : Original data only (no augmented rows)
+
+Test Accuracy    : 93.09%
+ROC-AUC Score    : 0.9835
+CV Mean Accuracy : 94.01% +/- 0.55%
+
+XGBoost Parameters (v3 — stronger regularization):
+  n_estimators     = 150
+  max_depth        = 2
+  learning_rate    = 0.05
+  gamma            = 8.0
+  min_child_weight = 25
+  subsample        = 0.6
+  colsample_bytree = 0.6
+  reg_alpha        = 2.0
+  reg_lambda       = 8.0
+
+Classification Report:
+              precision    recall  f1-score   support
+
+No Landslide       0.96      0.95      0.95      1417
+   Landslide       0.84      0.88      0.86       450
+
+    accuracy                           0.93      1867
+   macro avg       0.90      0.92      0.91      1867
+weighted avg       0.93      0.93      0.93      1867
+
+
+Confusion Matrix:
+                     Pred No Landslide  Pred Landslide
+Actual No Landslide               1340              77
+Actual Landslide                    52             398
+
+Feature Importance:
+           feature  importance
+       elevation_m    0.308488
+         longitude    0.175089
+       rainfall_mm    0.162093
+         soil_type    0.145408
+     temperature_c    0.077874
+      humidity_pct    0.042444
+river_proximity_km    0.034211
+    wind_speed_kmh    0.030481
+          latitude    0.023912

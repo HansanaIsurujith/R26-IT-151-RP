@@ -1,0 +1,8 @@
+*.shp
+*.dbf
+*.shx
+*.prj
+*.sbx
+*.sbn
+*.cpg
+backend/Flood-Landslide/shp/
