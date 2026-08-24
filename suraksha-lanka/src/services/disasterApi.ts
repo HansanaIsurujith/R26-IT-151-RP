@@ -14,7 +14,10 @@
  */
 
 
-export const API_BASE_URL = "http://10.103.15.94:8000"; //my ip
+// export const API_BASE_URL = "http://10.103.15.94:8000"; //my ip
+
+export const API_BASE_URL = "http://localhost:8000";
+
 
 // ─────────────────────────────────────────────
 // Types
