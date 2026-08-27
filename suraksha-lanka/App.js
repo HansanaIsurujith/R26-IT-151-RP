@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text } from "react-native";
 import HomeScreen from "./src/screens/HomeScreen";
 import MapScreen from "./src/screens/MapScreen";
+import ManualInputScreen from "./src/screens/ManualInputScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -111,6 +112,14 @@ function NavigationStack() {
           title: "Map View",
         }}
       />
+
+      <Stack.Screen
+        name="ManualInput"
+        component={ManualInputScreen}
+        options={{ title: "Manual Test"   
+        }}
+      />
+
     </Stack.Navigator>
   );
 }
