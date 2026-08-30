@@ -1,27 +1,41 @@
 import React from "react";
+import { View, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text } from "react-native";
+
 import HomeScreen from "./src/screens/HomeScreen";
 import MapScreen from "./src/screens/MapScreen";
+import RouteScreen from "./src/screens/RouteScreen";
+import ManualInputScreen from "./src/screens/ManualInputScreen";
 
 const Stack = createNativeStackNavigator();
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+    return {
+      hasError: true,
+      error,
+    };
   }
 
   componentDidCatch(error, errorInfo) {
     console.error("App Error:", error);
     console.error("Error Info:", errorInfo);
-    this.setState({ errorInfo });
+
+    this.setState({
+      errorInfo,
+    });
   }
 
   render() {
@@ -47,6 +61,7 @@ class ErrorBoundary extends React.Component {
             >
               ⚠️ Application Error
             </Text>
+
             <Text
               style={{
                 fontSize: 14,
@@ -58,6 +73,7 @@ class ErrorBoundary extends React.Component {
             >
               {this.state.error?.message || "An unexpected error occurred"}
             </Text>
+
             {this.state.errorInfo && (
               <Text
                 style={{
@@ -84,15 +100,14 @@ function NavigationStack() {
     <Stack.Navigator
       screenOptions={{
         headerShown: true,
-        animationEnabled: true,
+        animation: "slide_from_right",
         headerStyle: {
           backgroundColor: "#0ea5e9",
         },
-        headerTintColor: "#fff",
+        headerTintColor: "#ffffff",
         headerTitleStyle: {
           fontWeight: "700",
           fontSize: 18,
-          color: "#fff",
         },
       }}
     >
@@ -104,11 +119,28 @@ function NavigationStack() {
           headerBackVisible: false,
         }}
       />
+
       <Stack.Screen
         name="Map"
         component={MapScreen}
         options={{
           title: "Map View",
+        }}
+      />
+
+      <Stack.Screen
+        name="RouteOptimization"
+        component={RouteScreen}
+        options={{
+          title: "Risk-Aware Route",
+        }}
+      />
+
+      <Stack.Screen
+        name="ManualInput"
+        component={ManualInputScreen}
+        options={{
+          title: "Check Flood Risk",
         }}
       />
     </Stack.Navigator>

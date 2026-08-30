@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+data/live_hazards.sqlite3
+data/live_hazards.sqlite3-*

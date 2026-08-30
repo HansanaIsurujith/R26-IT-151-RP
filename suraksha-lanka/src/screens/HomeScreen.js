@@ -1,14 +1,26 @@
 import React from "react";
-import { View, StyleSheet, Text, Pressable, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  ScrollView,
+} from "react-native";
 
 export default function HomeScreen({ navigation }) {
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header Section */}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.emoji}>🛡️</Text>
         <Text style={styles.title}>Suraksha Lanka</Text>
-        <Text style={styles.subtitle}>Disaster & Wildlife Detection System</Text>
+        <Text style={styles.subtitle}>
+          Disaster & Wildlife Detection System
+        </Text>
       </View>
 
       {/* Welcome Message */}
@@ -18,11 +30,10 @@ export default function HomeScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* Features Grid */}
+      {/* Services */}
       <View style={styles.featuresContainer}>
         <Text style={styles.sectionTitle}>Our Services</Text>
 
-        {/* Flood Feature */}
         <View style={[styles.featureCard, styles.floodCard]}>
           <Text style={styles.featureEmoji}>🌊</Text>
           <Text style={styles.featureName}>Flood Detection</Text>
@@ -31,7 +42,6 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* Landslide Feature */}
         <View style={[styles.featureCard, styles.landslideCard]}>
           <Text style={styles.featureEmoji}>⛰️</Text>
           <Text style={styles.featureName}>Landslide Detection</Text>
@@ -40,7 +50,6 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
 
-        {/* Wildlife Feature */}
         <View style={[styles.featureCard, styles.wildlifeCard]}>
           <Text style={styles.featureEmoji}>🐘</Text>
           <Text style={styles.featureName}>Wildlife Detection</Text>
@@ -48,26 +57,50 @@ export default function HomeScreen({ navigation }) {
             Track elephant movement and wildlife patterns
           </Text>
         </View>
+
+        {/* Route Optimization */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open risk-aware route planner"
+          style={({ pressed }) => [
+            styles.featureCard,
+            styles.routeCard,
+            pressed && styles.featureCardPressed,
+          ]}
+          onPress={() => navigation.navigate("RouteOptimization")}
+        >
+          <Text style={styles.featureEmoji}>🧭</Text>
+          <Text style={styles.featureName}>Risk-Aware Routes</Text>
+          <Text style={styles.featureDesc}>
+            Compare routes across flood, landslide, and wildlife risk signals
+          </Text>
+          <Text style={styles.featureLink}>
+            Open multi-hazard route planner →
+          </Text>
+        </Pressable>
       </View>
 
-      {/* Info Section */}
+      {/* Information */}
       <View style={styles.infoSection}>
         <View style={styles.infoItem}>
           <Text style={styles.infoIcon}>📍</Text>
           <Text style={styles.infoText}>Real-time Location Tracking</Text>
         </View>
+
         <View style={styles.infoItem}>
           <Text style={styles.infoIcon}>⚡</Text>
           <Text style={styles.infoText}>Instant Alerts & Notifications</Text>
         </View>
+
         <View style={styles.infoItem}>
           <Text style={styles.infoIcon}>🗺️</Text>
           <Text style={styles.infoText}>Interactive Map View</Text>
         </View>
       </View>
 
-      {/* CTA Button */}
+      {/* Map Button */}
       <Pressable
+        accessibilityRole="button"
         style={({ pressed }) => [
           styles.ctaButton,
           pressed && styles.ctaButtonPressed,
@@ -75,6 +108,20 @@ export default function HomeScreen({ navigation }) {
         onPress={() => navigation.navigate("Map")}
       >
         <Text style={styles.ctaText}>Start Monitoring</Text>
+        <Text style={styles.ctaArrow}>→</Text>
+      </Pressable>
+
+      {/* Manual Flood Risk Button */}
+      <Pressable
+        accessibilityRole="button"
+        style={({ pressed }) => [
+          styles.ctaButton,
+          styles.manualInputButton,
+          pressed && styles.ctaButtonPressed,
+        ]}
+        onPress={() => navigation.navigate("ManualInput")}
+      >
+        <Text style={styles.ctaText}>📍 Check a Location</Text>
         <Text style={styles.ctaArrow}>→</Text>
       </Pressable>
 
@@ -92,6 +139,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f9ff",
+  },
+  scrollContent: {
+    paddingBottom: 10,
   },
   header: {
     alignItems: "center",
@@ -135,16 +185,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 26,
   },
+  featuresContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
   sectionTitle: {
     fontSize: 22,
     fontWeight: "700",
     color: "#0c4a6e",
     marginBottom: 16,
     marginTop: 10,
-  },
-  featuresContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
   },
   featureCard: {
     borderRadius: 16,
@@ -172,6 +222,15 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: "#10b981",
   },
+  routeCard: {
+    backgroundColor: "#e0f2fe",
+    borderLeftWidth: 4,
+    borderLeftColor: "#0ea5e9",
+  },
+  featureCardPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.99 }],
+  },
   featureEmoji: {
     fontSize: 40,
     marginBottom: 10,
@@ -187,6 +246,12 @@ const styles = StyleSheet.create({
     color: "#4b5563",
     textAlign: "center",
     lineHeight: 18,
+  },
+  featureLink: {
+    marginTop: 10,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#0369a1",
   },
   infoSection: {
     paddingHorizontal: 20,
@@ -211,14 +276,14 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   infoText: {
+    flex: 1,
     fontSize: 14,
     fontWeight: "600",
     color: "#1f2937",
-    flex: 1,
   },
   ctaButton: {
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginTop: 10,
     paddingVertical: 16,
     paddingHorizontal: 20,
     backgroundColor: "#0ea5e9",
@@ -231,6 +296,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
+  },
+  manualInputButton: {
+    backgroundColor: "#0284c7",
+    marginTop: 15,
   },
   ctaButtonPressed: {
     opacity: 0.85,
