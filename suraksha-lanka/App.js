@@ -6,6 +6,7 @@ import { View, Text } from "react-native";
 import HomeScreen from "./src/screens/HomeScreen";
 import MapScreen from "./src/screens/MapScreen";
 import ManualInputScreen from "./src/screens/ManualInputScreen";
+import FloodScenarioScreen from "./src/screens/FloodScenarioScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +118,12 @@ function NavigationStack() {
         name="ManualInput"
         component={ManualInputScreen}
         options={{ title: "Check Flood Risk" }}
+      />
+
+      <Stack.Screen
+        name="FloodScenario"
+        component={FloodScenarioScreen}
+        options={{ title: "Flood Scenario Simulation",}}
       />
 
     </Stack.Navigator>

@@ -85,6 +85,20 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.ctaText}>📍 Check a Location</Text>
       </Pressable>
 
+      <Pressable
+        style={[styles.ctaButton,
+      {
+        backgroundColor: "#7C3AED",},
+      ]}
+        onPress={() =>
+        navigation.navigate("FloodScenario")
+      }
+      >
+      <Text style={styles.ctaText}>
+        🧪 Flood Scenario Simulation
+      </Text>
+      </Pressable>
+
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
