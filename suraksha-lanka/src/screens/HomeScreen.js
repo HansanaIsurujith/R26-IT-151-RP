@@ -78,6 +78,13 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.ctaArrow}>→</Text>
       </Pressable>
 
+      <Pressable
+        style={styles.ctaButton}
+        onPress={() => navigation.navigate("ManualInput")}
+      >
+        <Text style={styles.ctaText}>📍 Check a Location</Text>
+      </Pressable>
+
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>

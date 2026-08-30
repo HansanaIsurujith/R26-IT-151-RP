@@ -1,0 +1,5 @@
+{
+  "warning": 0.8,
+  "high": 0.95,
+  "selection": "inner_spatial_validation_max_f2"
+}

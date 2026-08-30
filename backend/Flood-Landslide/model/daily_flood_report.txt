@@ -1,0 +1,57 @@
+Suraksha Lanka — Daily Flood-Risk Training Report
+================================================================
+Dataset                  : gampaha_daily_unosat_dataset.csv
+Rows                     : 158920
+Locations                : 145
+Features                 : ['today_rainfall_mm', 'rain_3d_mm', 'rain_7d_mm', 'rain_30d_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh', 'elevation_m', 'soil_type', 'river_proximity_km']
+Validation design        : outer spatial test + inner spatial threshold selection
+Satellite row weight     : 5.0x
+Tuning class weight      : 67.4071
+Final class weight       : 75.0383
+Selected warning threshold: 0.80
+
+Test accuracy  : 0.9997
+Test precision : 0.9821
+Test recall    : 0.9649
+Test F1        : 0.9735
+Test F2        : 0.9683
+Test ROC-AUC   : 0.9999
+Test PR-AUC    : 0.9911
+
+Confusion matrix:
+[[31610     3]
+ [    6   165]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+No Flood Risk       1.00      1.00      1.00     31613
+   Flood Risk       0.98      0.96      0.97       171
+
+     accuracy                           1.00     31784
+    macro avg       0.99      0.98      0.99     31784
+ weighted avg       1.00      1.00      1.00     31784
+
+
+UNOSAT evaluation:
+Untouched UNOSAT test rows: 7
+UNOSAT positive recall: 0.1429
+Positive-only spatial event-window check; not multi-event validation.
+
+Feature importance:
+           feature  importance
+        rain_7d_mm    0.420155
+river_proximity_km    0.224747
+ today_rainfall_mm    0.107729
+        rain_3d_mm    0.062754
+       rain_30d_mm    0.062530
+       elevation_m    0.048135
+    wind_speed_kmh    0.033611
+     temperature_c    0.014245
+      humidity_pct    0.014036
+         soil_type    0.012058
+
+Research limitation:
+Most targets are weak-rule labels. UNOSAT contributes one composite event
+window at three sampled locations. Metrics therefore demonstrate prototype
+feasibility against hybrid labels, not production flood-detection accuracy.

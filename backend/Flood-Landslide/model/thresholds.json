@@ -1,12 +1,10 @@
 {
   "flood": {
-    "optimal": 0.5449,
-    "high_risk": 0.6949,
-    "warning": 0.4449
+    "warning": 0.30,
+    "high": 0.70
   },
   "landslide": {
-    "optimal": 0.5086,
-    "high_risk": 0.6586,
-    "warning": 0.4086
+    "warning": 0.50,
+    "high": 0.70
   }
 }
