@@ -7,13 +7,13 @@ FIXES in v2:
   - No Risk rule loosened (Gampaha wet zone reality)
   - Warning threshold tightened so No Risk gets proper share
   - Fog conditions adjusted
-  - Augmentation targets balanced across all 5 classes
+  - Pre-split augmentation removed to prevent evaluation leakage
 
 Sources:
   - Open-Meteo Archive API  → rainfall, humidity, temperature, wind (REAL)
-  - Elevation               → Gampaha terrain zone estimation
-  - Slope                   → derived from elevation
-  - Soil type               → Gampaha geographic zone mapping
+  - Elevation               → deterministic terrain proxy (prototype limitation)
+  - Slope                   → deterministic proxy derived from elevation
+  - Soil type               → deterministic geographic proxy
   - River proximity         → Kelani + Attanagalu Oya coordinates
   - NDVI                    → estimated from elevation + rainfall
   - Risk labels             → rule-based (NBRO/DMC Sri Lanka aligned)
@@ -31,7 +31,7 @@ LAT_MIN, LAT_MAX = 6.90, 7.40
 LNG_MIN, LNG_MAX = 79.85, 80.35
 GRID_STEP        = 0.025
 START_DATE       = "2023-01-01"
-END_DATE         = "2025-05-31"
+END_DATE         = "2025-12-31"   # extended to cover Cyclone Ditwah (Nov 26 - Dec 2, 2025)
 REQUEST_DELAY    = 0.3
 OUTPUT_FILE      = "gampaha_real_dataset.csv"
 
@@ -59,34 +59,32 @@ def estimate_elevation(lat, lng):
     - Central plains (80.0–80.2)         : 20–90m
     - Eastern foothills (lng > 80.2)     : 80–250m
     """
+    # Must remain identical to api/main.py until a real DEM replaces it.
     if lng < 80.0:
-        base = np.random.uniform(5, 30)
+        base = 8 + (lat - 7.0) * 10 + (lng - 79.9) * 15
     elif lng < 80.15:
-        base = np.random.uniform(20, 90)
+        base = 25 + (lat - 7.0) * 20 + (lng - 80.0) * 30
     elif lng < 80.25:
-        base = np.random.uniform(60, 160)
+        base = 60 + (lat - 7.0) * 30 + (lng - 80.15) * 50
     else:
-        base = np.random.uniform(100, 250)
-    return max(3, round(base + np.random.normal(0, 5), 1))
+        base = 120 + (lat - 7.0) * 40 + (lng - 80.25) * 80
+    return round(max(3.0, min(250.0, base)), 1)
 
 def estimate_slope(elevation):
     if elevation < 20:
-        return round(np.random.uniform(0.2, 2.5), 1)
-    elif elevation < 60:
-        return round(np.random.uniform(1.5, 8.0), 1)
-    elif elevation < 120:
-        return round(np.random.uniform(6.0, 20.0), 1)
-    else:
-        return round(np.random.uniform(15.0, 38.0), 1)
+        return round(0.5 + elevation * 0.08, 1)
+    if elevation < 60:
+        return round(2.0 + (elevation - 20) * 0.12, 1)
+    if elevation < 120:
+        return round(6.8 + (elevation - 60) * 0.18, 1)
+    return round(17.6 + (elevation - 120) * 0.15, 1)
 
 def estimate_soil(lat, lng, elevation):
     if elevation < 25 or river_proximity(lat, lng) < 1.5:
-        soils = ['clay', 'clay', 'clay', 'loam']
-    elif elevation < 80:
-        soils = ['loam', 'loam', 'clay', 'sandy']
-    else:
-        soils = ['loam', 'sandy', 'sandy', 'loam']
-    return np.random.choice(soils)
+        return 'clay'
+    if elevation < 80:
+        return 'loam'
+    return 'sandy'
 
 def estimate_ndvi(elevation, rainfall_monthly):
     base = 0.3 + min(elevation / 500, 0.25) + min(rainfall_monthly / 400, 0.25)
@@ -207,7 +205,8 @@ def main():
     print("=" * 55)
     print(f"  Grid points : {len(grid_points)}")
     print(f"  Period      : {START_DATE} → {END_DATE}")
-    print(f"  Expected    : ~{len(grid_points) * 28} rows before augmentation")
+    expected_months = len(pd.period_range(START_DATE[:7], END_DATE[:7], freq="M"))
+    print(f"  Expected    : ~{len(grid_points) * expected_months} rows")
     print("=" * 55)
 
     all_rows = []
@@ -261,34 +260,29 @@ def main():
     print(f"  Labels :\n{df['risk_label'].value_counts()}")
     print("=" * 55)
 
-    # ── Augmentation — balance minority classes ────────────────────────────────
-    print("\n  Balancing classes...")
-    label_counts = df['risk_label'].value_counts()
-    target = int(label_counts.median() * 1.2)   # target = 120% of median class
-    print(f"  Augmentation target per class: {target} rows")
+    # Do not augment before splitting. Duplicated/noisy copies can leak into
+    # both training and testing. XGBoost sample weights handle imbalance later.
+    df = df.drop_duplicates().sort_values(
+        ["latitude", "longitude", "month"]
+    ).reset_index(drop=True)
 
-    aug_rows = []
-    for label in df['risk_label'].unique():
-        class_df = df[df['risk_label'] == label]
-        if len(class_df) < target:
-            needed = target - len(class_df)
-            sampled = class_df.sample(n=needed, replace=True, random_state=42).copy()
-            # Add small Gaussian noise to numeric columns
-            for col in ['rainfall_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh']:
-                std = sampled[col].std()
-                sampled[col] = (sampled[col] + np.random.normal(0, std * 0.05, len(sampled))).round(1)
-            aug_rows.append(sampled)
-            print(f"  Augmented '{label}': +{needed} rows → total {len(class_df) + needed}")
+    required = {"2023-01", "2025-11", "2025-12"}
+    available = set(df["month"].astype(str))
+    missing_months = sorted(required - available)
+    if missing_months:
+        raise RuntimeError(
+            f"Dataset incomplete; missing required months: {missing_months}"
+        )
 
-    if aug_rows:
-        df = pd.concat([df] + aug_rows, ignore_index=True)
-        df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+    if df.isna().any().any():
+        raise RuntimeError("Dataset contains missing values; inspect API responses")
 
     df.to_csv(OUTPUT_FILE, index=False)
 
     print("\n" + "=" * 55)
     print(f"  ✅ Saved: {OUTPUT_FILE}")
     print(f"  Final rows  : {len(df)}")
+    print(f"  Date range  : {df['month'].min()} -> {df['month'].max()}")
     print(f"  Final labels:\n{df['risk_label'].value_counts()}")
     print("=" * 55)
 

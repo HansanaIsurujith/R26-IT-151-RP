@@ -526,6 +526,32 @@ export default function MapScreen({ route }) {
   }, [disasterType, dayType]);
 
   // ── Fetch from FastAPI ────────────────────────────────────
+  // const fetchZones = async () => {
+  //   setZonesLoading(true);
+  //   setError(null);
+  //   setIsManual(false);
+  //   try {
+  //     let response;
+  //     if (disasterType === "flood") {
+  //       response = dayType === "today"
+  //         ? await getFloodZonesToday()
+  //         : await getFloodZonesTomorrow();
+  //     } else {
+  //       response = dayType === "today"
+  //         ? await getLandslideZonesToday()
+  //         : await getLandslideZonesTomorrow();
+  //     }
+  //     setZones(getVisibleZones(response.zones));
+  //     setSummary(response.summary);
+  //     setWeather(response.weather);
+  //     setLastFetched(new Date().toLocaleTimeString());
+  //   } catch (err) {
+  //     setError("Backend connect වෙන්න බෑ.");
+  //   } finally {
+  //     setZonesLoading(false);
+  //   }
+  // };
+
   const fetchZones = async () => {
     setZonesLoading(true);
     setError(null);
@@ -541,10 +567,14 @@ export default function MapScreen({ route }) {
           ? await getLandslideZonesToday()
           : await getLandslideZonesTomorrow();
       }
+
+      // Daily endpoint already applies the trained model threshold.
+      // Safe grid points remain in the summary but are hidden from the map.
       setZones(getVisibleZones(response.zones));
       setSummary(response.summary);
       setWeather(response.weather);
       setLastFetched(new Date().toLocaleTimeString());
+
     } catch (err) {
       setError("Backend connect වෙන්න බෑ.");
     } finally {
@@ -711,7 +741,12 @@ export default function MapScreen({ route }) {
               <Text style={styles.summaryLabel}>Safe</Text>
             </View>
           </View>
-          {weather && (
+          {weather && floodActive && (
+            <Text style={styles.weatherText}>
+              🌧️ Average target-day rainfall: {weather.rainfall_mm}mm
+            </Text>
+          )}
+          {weather && !floodActive && (
             <Text style={styles.weatherText}>
               🌧️ {weather.rainfall_mm}mm  💧 {weather.humidity_pct}%  🌡️ {weather.temperature_c}°C
             </Text>

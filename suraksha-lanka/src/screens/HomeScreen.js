@@ -82,7 +82,7 @@ export default function HomeScreen({ navigation }) {
         style={styles.ctaButton}
         onPress={() => navigation.navigate("ManualInput")}
       >
-        <Text style={styles.ctaText}>🧪 Manual Test</Text>
+        <Text style={styles.ctaText}>📍 Check a Location</Text>
       </Pressable>
 
       {/* Footer */}

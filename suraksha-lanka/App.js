@@ -116,8 +116,7 @@ function NavigationStack() {
       <Stack.Screen
         name="ManualInput"
         component={ManualInputScreen}
-        options={{ title: "Manual Test"   
-        }}
+        options={{ title: "Check Flood Risk" }}
       />
 
     </Stack.Navigator>
