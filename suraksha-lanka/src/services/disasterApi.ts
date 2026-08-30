@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-const COMPUTER_IP = "10.103.15.94";
+const COMPUTER_IP = "127.0.0.1";
 export const API_BASE_URL = Platform.OS === "web"
   ? "http://localhost:8000"
   : `http://${COMPUTER_IP}:8000`;
@@ -68,6 +68,31 @@ export type DailyFloodPrediction = {
   data_source: string;
   model_limitations: string;
 };
+
+export async function getFloodZonesManual(
+  input: ManualInput,
+): Promise<ZoneResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/predict/flood/zones`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    },
+  );
+
+  if (!response.ok) {
+    const detail = await response.text();
+
+    throw new Error(
+      `Flood scenario error: ${response.status}: ${detail}`,
+    );
+  }
+
+  return response.json();
+}
 
 async function getJson<T>(path: string, timeoutMs = 120000): Promise<T> {
   const controller = new AbortController();

@@ -515,16 +515,37 @@ export default function MapScreen({ route }) {
   }, []);
 
   // ── Auto fetch when type/day changes ─────────────────────
-  useEffect(() => {
-    if (!route?.params?.manualZones || !isManual) {
-      setIsManual(false);
-      fetchZones();
-      clearInterval(refreshRef.current);
-      refreshRef.current = setInterval(fetchZones, REFRESH_MS);
-    }
-    return () => clearInterval(refreshRef.current);
-  }, [disasterType, dayType]);
+  // useEffect(() => {
+  //   if (!route?.params?.manualZones || !isManual) {
+  //     setIsManual(false);
+  //     fetchZones();
+  //     clearInterval(refreshRef.current);
+  //     refreshRef.current = setInterval(fetchZones, REFRESH_MS);
+  //   }
+  //   return () => clearInterval(refreshRef.current);
+  // }, [disasterType, dayType]);
+useEffect(() => {
+  if (route?.params?.manualZones) {
+    return;
+  }
 
+  setIsManual(false);
+  fetchZones();
+
+  clearInterval(refreshRef.current);
+
+  refreshRef.current = setInterval(
+    fetchZones,
+    REFRESH_MS,
+  );
+
+  return () =>
+    clearInterval(refreshRef.current);
+}, [
+  disasterType,
+  dayType,
+  route?.params?.manualZones,
+]);
   // ── Fetch from FastAPI ────────────────────────────────────
   // const fetchZones = async () => {
   //   setZonesLoading(true);
@@ -645,7 +666,7 @@ export default function MapScreen({ route }) {
       {isManual && (
         <View style={styles.manualBanner}>
           <Text style={styles.manualBannerText}>
-            🧪 Manual Input Mode — {weather?.rainfall_mm}mm rainfall
+            🧪 SIMULATION — {weather?.rainfall_mm}mm rainfall (not live weather)
           </Text>
           <TouchableOpacity onPress={() => { setIsManual(false); fetchZones(); }}>
             <Text style={styles.manualBannerBtn}>Auto →</Text>
