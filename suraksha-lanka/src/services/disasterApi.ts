@@ -16,13 +16,86 @@
 
 // export const API_BASE_URL = "http://10.103.15.94:8000"; //my ip
 
-export const API_BASE_URL = "http://localhost:8000";
+// Keep localhost for local emulator testing. A physical Android phone will later need the computer's LAN IP instead of localhost.
+export const API_BASE_URL = "http://192.168.159.191:8000";
 
 
 // ─────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────
 export type RiskLevel = "high" | "warning" | "safe";
+
+export type WildlifeSpeciesRisk = {
+  species: string;
+  score: number;
+  risk_level: string;
+  colour: string;
+  icon: string;
+  observations?: number;
+  weighted_evidence?: number;
+  nearest_distance_km?: number | null;
+  temporal_multiplier?: number | null;
+};
+
+export type WildlifeRiskResponse = {
+  latitude: number;
+  longitude: number;
+  evaluation_time: string;
+  search_radius_km: number;
+  encounter_risk_score: number;
+  data_confidence: number;
+  species: WildlifeSpeciesRisk[];
+};
+
+export type WildlifeLocationSpecies = {
+  species: string;
+  score: number;
+  risk_level: string;
+  risk_colour: string;
+  observation_count: number;
+  nearest_observation_distance_km: number | null;
+};
+
+export type WildlifeLocation = {
+  location_id: string;
+  latitude: number;
+  longitude: number;
+  primary_species: string;
+  primary_icon?: string | null;
+  primary_score: number;
+  risk_level: string;
+  risk_colour: string;
+  additional_species_count: number;
+  species: WildlifeLocationSpecies[];
+  observation_count: number;
+  grouping_tolerance_m: number;
+  score_basis: string;
+};
+
+export type WildlifeLocationsResponse = {
+  locations: WildlifeLocation[];
+  metadata: {
+    search_radius_km: number;
+    evaluation_time: string;
+    grouping_tolerance_m: number;
+    score_interpretation: string;
+  };
+};
+
+export type WildlifeMapLocationsResponse = {
+  locations: WildlifeLocation[];
+  metadata: {
+    evaluation_time: string;
+    grouping_tolerance_m: number;
+    score_interpretation: string;
+    viewport: {
+      north: number;
+      south: number;
+      east: number;
+      west: number;
+    };
+  };
+};
 
 export type RiskZone = {
   lat:         number;
@@ -140,6 +213,75 @@ export async function getLandslideZonesManual(input: ManualInput): Promise<ZoneR
     body:    JSON.stringify(input),
   });
   if (!res.ok) throw new Error(`Landslide manual error: ${res.status}`);
+  return res.json();
+}
+
+// ─────────────────────────────────────────────
+// Wildlife Risk API
+// ─────────────────────────────────────────────
+export async function evaluateWildlifeRisk(latitude: number, longitude: number): Promise<WildlifeRiskResponse> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/risk/evaluate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ latitude, longitude }),
+    });
+
+    if (!res.ok) {
+      let message = "Unable to calculate wildlife risk.";
+      try {
+        const errorBody = await res.json();
+        if (errorBody?.detail) {
+          message = errorBody.detail;
+        }
+      } catch {
+        // no-op: keep default message
+      }
+      throw new Error(message);
+    }
+
+    return await res.json();
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Unable to calculate wildlife risk."
+    );
+  }
+}
+
+export async function getWildlifeLocations(
+  latitude: number,
+  longitude: number,
+  search_radius_km = 10
+): Promise<WildlifeLocationsResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/wildlife/locations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ latitude, longitude, search_radius_km }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Wildlife locations error: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getWildlifeMapLocations(
+  north: number,
+  south: number,
+  east: number,
+  west: number
+): Promise<WildlifeMapLocationsResponse> {
+  const res = await fetch(`${API_BASE_URL}/api/wildlife/map-locations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ north, south, east, west }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Wildlife map locations error: ${res.status}`);
+  }
+
   return res.json();
 }
 
