@@ -128,7 +128,7 @@ function selectWildlifeMarkers(locations, latitudeDelta = 1.0) {
 }
 
 // ════════════════════════════════════════════════════════════
-export default function MapScreen() {
+export default function MapScreen({ route }) {
   const [userLocation,   setUserLocation]   = useState(null);
   const [isLoading,      setIsLoading]      = useState(true);
   const [wildlifeRisk, setWildlifeRisk] = useState(null);
@@ -139,8 +139,11 @@ export default function MapScreen() {
   const [selectedWildlifeLocation, setSelectedWildlifeLocation] = useState(null);
 
   // Mode state
-  const [disasterType,   setDisasterType]   = useState("flood");     // "flood" | "landslide"
-  const [dayType,        setDayType]        = useState("today");      // "today" | "tomorrow"
+  const [disasterType, setDisasterType] = useState(
+    route?.params?.disasterType || "flood"
+  );
+  const [dayType, setDayType] = useState("today");
+  const [isManual, setIsManual] = useState(false);
 
   // Zones
   const [zones,          setZones]          = useState([]);
@@ -154,6 +157,26 @@ export default function MapScreen() {
   const refreshRef   = useRef(null);
   const wildlifeMapDebounceRef = useRef(null);
   const wildlifeMapRequestRef = useRef(0);
+
+  // ── Handle manual zones from ManualInputScreen ────────────
+  useEffect(() => {
+    if (!route?.params?.manualZones) return;
+
+    const {
+      manualZones,
+      manualSummary,
+      manualWeather,
+      disasterType: dt,
+    } = route.params;
+
+    setZones(getVisibleZones(manualZones));
+    setSummary(manualSummary);
+    setWeather(manualWeather);
+    setDisasterType(dt || "flood");
+    setLastFetched("Manual input");
+    setIsManual(true);
+    setIsLoading(false);
+  }, [route?.params?.manualZones]);
 
   // ── Get GPS ───────────────────────────────────────────────
   useEffect(() => {
@@ -262,13 +285,20 @@ export default function MapScreen() {
 
   // ── Fetch zones when type or day changes ──────────────────
   useEffect(() => {
+    // Do not overwrite manual simulation results
+    if (isManual) {
+      clearInterval(refreshRef.current);
+      return;
+    }
+
     fetchZones();
 
     // Auto refresh
     clearInterval(refreshRef.current);
     refreshRef.current = setInterval(fetchZones, REFRESH_MS);
+
     return () => clearInterval(refreshRef.current);
-  }, [disasterType, dayType]);
+  }, [disasterType, dayType, isManual]);
 
   // ── Fetch from FastAPI ────────────────────────────────────
   const fetchZones = async () => {
@@ -432,10 +462,29 @@ export default function MapScreen() {
         </View>
       )}
 
+      {/* Manual Mode Banner */}
+      {isManual && (
+        <View style={styles.manualBanner}>
+          <Text style={styles.manualBannerText}>
+            🧪 SIMULATION — {weather?.rainfall_mm}mm rainfall (not live weather)
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              setIsManual(false);
+              fetchZones();
+            }}
+          >
+            <Text style={styles.manualBannerBtn}>Auto →</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* ── Disaster Type Buttons ─────────────────────────── */}
-      <View style={styles.typeButtonRow}>
-        <TouchableOpacity
-          style={[styles.typeBtn, floodActive && styles.typeBtnFloodActive]}
+      {!isManual && (
+        <View style={styles.typeButtonRow}>
+          <TouchableOpacity
+            style={[styles.typeBtn, floodActive && styles.typeBtnFloodActive]}
           onPress={() => setDisasterType("flood")}
         >
           <Text style={[styles.typeBtnText, floodActive && styles.typeBtnTextActive]}>
@@ -450,12 +499,14 @@ export default function MapScreen() {
           <Text style={[styles.typeBtnText, landslideActive && styles.typeBtnTextActive]}>
             ⛰️ Landslide
           </Text>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* ── Day Toggle Buttons ────────────────────────────── */}
-      <View style={styles.dayButtonRow}>
-        <TouchableOpacity
+      {!isManual && (
+        <View style={styles.dayButtonRow}>
+          <TouchableOpacity
           style={[styles.dayBtn, todayActive && styles.dayBtnActive]}
           onPress={() => setDayType("today")}
         >
@@ -471,8 +522,9 @@ export default function MapScreen() {
           <Text style={[styles.dayBtnText, tomorrowActive && styles.dayBtnTextActive]}>
             Tomorrow
           </Text>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* ── Loading Bar ───────────────────────────────────── */}
       {zonesLoading && (
@@ -650,6 +702,34 @@ export default function MapScreen() {
 
 // ── Styles ─────────────────────────────────────────────────
 const styles = StyleSheet.create({
+  manualBanner: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#7C3AED",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    zIndex: 20,
+  },
+
+  manualBannerText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "600",
+    flex: 1,
+  },
+
+  manualBannerBtn: {
+    color: "#E9D5FF",
+    fontSize: 13,
+    fontWeight: "700",
+    marginLeft: 10,
+  },
+
   container:   { flex: 1, backgroundColor: "#f5f5f5" },
   map:         { flex: 1 },
   centered:    { flex: 1, alignItems: "center", justifyContent: "center" },
