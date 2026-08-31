@@ -1,0 +1,6 @@
+C:\Users\Hansana\Downloads\platform-tools-latest-windows\platform-tools\adb.exe reverse tcp:8000 tcp:8000
+C:\Users\Hansana\Downloads\platform-tools-latest-windows\platform-tools\adb.exe reverse tcp:8081 tcp:8081
+
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+npx expo start

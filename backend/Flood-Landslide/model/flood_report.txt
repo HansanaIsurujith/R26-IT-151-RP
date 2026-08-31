@@ -1,54 +1,49 @@
-
-Suraksha Lanka — Flood Risk Model Training Report (v3)
+Suraksha Lanka -- Flood Model Training Report (v2: weighted)
 Project  : R26-IT-151
-Student  : IT22294470
 ==================================================
-Dataset       : gampaha_unosat_dataset.csv
-Model         : Binary XGBoost (Flood vs No Flood)
-Total Rows    : 9334
-Features used : ['latitude', 'longitude', 'rainfall_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh', 'elevation_m', 'soil_type']
+Dataset       : gampaha_unosat_dataset_newest.csv
+Model         : Binary XGBoost (Flood vs. Not Flood)
+Total rows    : 5544
+Features      : ['latitude', 'longitude', 'rainfall_mm', 'humidity_pct', 'temperature_c', 'wind_speed_kmh', 'elevation_m', 'soil_type', 'river_proximity_km']
+Sample weighting: satellite-verified rows x8.0, rule-based x1.0
 
-Fix applied   : Split before augmentation + stronger regularization
-Test set      : Original data only (no augmented rows)
+Overall test accuracy : 98.12%
+Overall ROC-AUC        : 0.9996
+Flood precision        : 0.8347
+Flood recall           : 0.9902
+Flood F1-score         : 0.9058
+Flood PR-AUC           : 0.9967
+5-fold spatial CV F1 (unweighted): 0.9785 +/- 0.0149
 
-Test Accuracy    : 88.54%
-ROC-AUC Score    : 0.9638
-CV Mean Accuracy : 91.95% +/- 0.96%
-
-XGBoost Parameters (v3 — stronger regularization):
-  n_estimators     = 150
-  max_depth        = 2
-  learning_rate    = 0.05
-  gamma            = 8.0
-  min_child_weight = 25
-  subsample        = 0.6
-  colsample_bytree = 0.6
-  reg_alpha        = 2.0
-  reg_lambda       = 8.0
+IMPORTANT -- label source note:
+Untouched satellite test rows evaluated: 2
+Recall on satellite test flood rows: 50.00%
+This is a positive-only spatial holdout check for one event;
+it does not establish multi-event generalization.
 
 Classification Report:
               precision    recall  f1-score   support
 
-    No Flood       0.99      0.86      0.92      1437
-       Flood       0.68      0.97      0.80       430
+    No Flood       1.00      0.98      0.99      1014
+       Flood       0.83      0.99      0.91       102
 
-    accuracy                           0.89      1867
-   macro avg       0.83      0.91      0.86      1867
-weighted avg       0.92      0.89      0.89      1867
+    accuracy                           0.98      1116
+   macro avg       0.92      0.99      0.95      1116
+weighted avg       0.98      0.98      0.98      1116
 
 
 Confusion Matrix:
-                 Pred No Flood  Pred Flood
-Actual No Flood           1238         199
-Actual Flood                15         415
+[[994  20]
+ [  1 101]]
 
 Feature Importance:
-       feature  importance
-   elevation_m    0.243296
-     longitude    0.169712
-   rainfall_mm    0.147586
-      latitude    0.125762
-     soil_type    0.092817
-wind_speed_kmh    0.086609
-  humidity_pct    0.082024
- temperature_c    0.052194
+           feature  importance
+river_proximity_km    0.383025
+         longitude    0.179339
+       elevation_m    0.131170
+          latitude    0.070519
+    wind_speed_kmh    0.064379
+         soil_type    0.054783
+       rainfall_mm    0.047941
+     temperature_c    0.043896
+      humidity_pct    0.024948
