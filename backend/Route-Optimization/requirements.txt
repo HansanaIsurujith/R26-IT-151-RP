@@ -1,0 +1,10 @@
+fastapi>=0.115,<1.0
+networkx>=3.2,<4.0
+numpy>=1.26,<3.0
+pydantic>=2.7,<3.0
+python-dotenv>=1.0,<2.0
+uvicorn[standard]>=0.30,<1.0
+
+# Test-only packages
+httpx>=0.27,<1.0
+pytest>=8.0,<10.0
