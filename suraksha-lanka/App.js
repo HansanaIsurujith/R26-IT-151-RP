@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text } from "react-native";
 import HomeScreen from "./src/screens/HomeScreen";
 import MapScreen from "./src/screens/MapScreen";
+import RouteScreen from "./src/screens/RouteScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -109,6 +110,13 @@ function NavigationStack() {
         component={MapScreen}
         options={{
           title: "Map View",
+        }}
+      />
+      <Stack.Screen
+        name="RouteOptimization"
+        component={RouteScreen}
+        options={{
+          title: "Risk-Aware Route",
         }}
       />
     </Stack.Navigator>

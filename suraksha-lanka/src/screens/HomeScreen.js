@@ -78,6 +78,26 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.ctaArrow}>→</Text>
       </Pressable>
 
+      {/* Risk-Aware Route Optimization */}
+      <Pressable
+        style={({ pressed }) => [
+          styles.routeButton,
+          pressed && styles.routeButtonPressed,
+        ]}
+        onPress={() => navigation.navigate("RouteOptimization")}
+      >
+        <Text style={styles.routeButtonIcon}>🛡️</Text>
+        <View style={styles.routeButtonContent}>
+          <Text style={styles.routeButtonTitle}>
+            Risk-Aware Route Optimization
+          </Text>
+          <Text style={styles.routeButtonSubtitle}>
+            Find safer routes by considering disaster & wildlife risks
+          </Text>
+        </View>
+        <Text style={styles.routeButtonArrow}>→</Text>
+      </Pressable>
+
       {/* Footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
@@ -247,6 +267,50 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
   },
+  routeButton: {
+    marginHorizontal: 20,
+    marginBottom: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    backgroundColor: "#0f766e",
+    borderRadius: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  routeButtonPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+  routeButtonIcon: {
+    fontSize: 30,
+    marginRight: 12,
+  },
+  routeButtonContent: {
+    flex: 1,
+  },
+  routeButtonTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 4,
+  },
+  routeButtonSubtitle: {
+    fontSize: 12,
+    color: "#ccfbf1",
+    lineHeight: 17,
+  },
+  routeButtonArrow: {
+    fontSize: 22,
+    color: "#fff",
+    fontWeight: "700",
+    marginLeft: 8,
+  },
+
   footer: {
     paddingVertical: 20,
     paddingHorizontal: 20,
