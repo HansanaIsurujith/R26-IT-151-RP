@@ -1,12 +1,16 @@
 {
   "name": "suraksha-lanka",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.19.4"
+  },
   "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@react-navigation/native": "^7.2.2",

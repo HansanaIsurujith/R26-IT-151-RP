@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-08-28T07:13:47.509526+00:00",
+  "research_design": "Option B: objective weighting without human surveys",
+  "weighting_provenance": {
+    "method": "CRITIC",
+    "weights": {
+      "flood": 0.354525870332695,
+      "landslide": 0.28320429403167563,
+      "elephant": 0.04810899812599242,
+      "buffalo": 0.09598888346078639,
+      "deer": 0.11813201945389246,
+      "wildboar": 0.10003993459495816
+    },
+    "contrast": {
+      "flood": 0.34080037781792943,
+      "landslide": 0.3851716702252478,
+      "elephant": 0.0429431536079815,
+      "buffalo": 0.14438639067397407,
+      "deer": 0.15111962200968274,
+      "wildboar": 0.15098694003382326
+    },
+    "information": {
+      "flood": 1.9657660793742986,
+      "landslide": 1.5703040069210767,
+      "elephant": 0.26675355606633167,
+      "buffalo": 0.5322367333226036,
+      "deer": 0.655015433746841,
+      "wildboar": 0.5546988991947093
+    },
+    "row_count": 228,
+    "dataset": "combined_hazard_grid.csv",
+    "dataset_sha256": "ba79664233b1a322d79629031d18b1269e8557c0ffb58153761002219f843e4b",
+    "formula": "C_j = sigma_j * sum_k(1-r_jk); w_j = C_j / sum(C)"
+  },
+  "boundary_tests": {
+    "all_zero": 0.0,
+    "all_one": 1.0,
+    "passed": true
+  },
+  "monotonicity": {
+    "samples": 100000,
+    "seed": 2026,
+    "violations": 0,
+    "largest_drop": 0.0,
+    "passed": true
+  },
+  "hierarchy_equivalence": {
+    "samples": 10000,
+    "maximum_absolute_error": 4.999150778894901e-07,
+    "passed": true
+  },
+  "bootstrap_weight_stability": {
+    "iterations": 1000,
+    "seed": 2026,
+    "hazards": {
+      "flood": {
+        "mean": 0.35642636,
+        "std": 0.02467017,
+        "ci95_low": 0.30947278,
+        "ci95_high": 0.40429425,
+        "top_rank_frequency": 0.992
+      },
+      "landslide": {
+        "mean": 0.28435123,
+        "std": 0.01143573,
+        "ci95_low": 0.26269024,
+        "ci95_high": 0.30754226,
+        "top_rank_frequency": 0.008
+      },
+      "elephant": {
+        "mean": 0.04818543,
+        "std": 0.00409331,
+        "ci95_low": 0.04069351,
+        "ci95_high": 0.05617131,
+        "top_rank_frequency": 0.0
+      },
+      "buffalo": {
+        "mean": 0.09443031,
+        "std": 0.01217059,
+        "ci95_low": 0.06937822,
+        "ci95_high": 0.1176952,
+        "top_rank_frequency": 0.0
+      },
+      "deer": {
+        "mean": 0.11797089,
+        "std": 0.01128081,
+        "ci95_low": 0.09652432,
+        "ci95_high": 0.14066456,
+        "top_rank_frequency": 0.0
+      },
+      "wildboar": {
+        "mean": 0.09863578,
+        "std": 0.01170109,
+        "ci95_low": 0.07515649,
+        "ci95_high": 0.12060068,
+        "top_rank_frequency": 0.0
+      }
+    }
+  },
+  "claim_boundary": "These tests establish reproducibility, stability and internal validity. They do not establish 100 percent real-world accuracy or road safety."
+}

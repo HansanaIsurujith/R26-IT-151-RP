@@ -1,0 +1,223 @@
+{
+  "generated_at": "2026-08-30T11:45:08.181846+00:00",
+  "research_design": "Option B: no human-response dependency",
+  "claim_boundary": "Internal comparative benchmark on available hazard proxies; not perfect real-world accuracy and not observed route ground truth.",
+  "network": "/workspace/scratch/d5313ae6247a/work/R26-IT-151-RP/backend/Route-Optimization/network/gampaha_road_network_with_hazards.graphml",
+  "od_pairs": 100,
+  "seed": 2026,
+  "weighting": {
+    "method": "CRITIC",
+    "weights": {
+      "flood": 0.354525870332695,
+      "landslide": 0.28320429403167563,
+      "elephant": 0.04810899812599242,
+      "buffalo": 0.09598888346078639,
+      "deer": 0.11813201945389246,
+      "wildboar": 0.10003993459495816
+    },
+    "contrast": {
+      "flood": 0.34080037781792943,
+      "landslide": 0.3851716702252478,
+      "elephant": 0.0429431536079815,
+      "buffalo": 0.14438639067397407,
+      "deer": 0.15111962200968274,
+      "wildboar": 0.15098694003382326
+    },
+    "information": {
+      "flood": 1.9657660793742986,
+      "landslide": 1.5703040069210767,
+      "elephant": 0.26675355606633167,
+      "buffalo": 0.5322367333226036,
+      "deer": 0.655015433746841,
+      "wildboar": 0.5546988991947093
+    },
+    "row_count": 228,
+    "dataset": "combined_hazard_grid.csv",
+    "dataset_sha256": "ba79664233b1a322d79629031d18b1269e8557c0ffb58153761002219f843e4b",
+    "formula": "C_j = sigma_j * sum_k(1-r_jk); w_j = C_j / sum(C)"
+  },
+  "metrics": {
+    "optimization_metric": "time_weighted_objective_fuzzy_risk_exposure",
+    "independent_evaluation_metrics": [
+      "six raw hazard exposures",
+      "maximum raw hazard on any segment",
+      "percentage of travel time in raw high-risk zones",
+      "travel-time overhead",
+      "held-out spatial-cell performance",
+      "route stability under small raw-input perturbations"
+    ],
+    "efficiency_metric": "travel_time_overhead_vs_fastest",
+    "guardrail": "maximum 30 percent travel-time detour"
+  },
+  "summary_by_method_and_lambda": [
+    {
+      "method": "objective_fuzzy",
+      "lambda": 8.0,
+      "trips": 100,
+      "mean_duration_min": 22.5062,
+      "mean_risk": 0.208605,
+      "mean_exposure_reduction_pct": 24.3576,
+      "median_exposure_reduction_pct": 10.8833,
+      "mean_time_overhead_pct": 7.1167,
+      "maximum_time_overhead_pct": 29.3413,
+      "guardrail_applied_pct": 47.0,
+      "trips_with_lower_exposure_pct": 59.0,
+      "pareto_success_under_30pct_detour_pct": 59.0
+    },
+    {
+      "method": "objective_weight",
+      "lambda": 8.0,
+      "trips": 100,
+      "mean_duration_min": 22.4142,
+      "mean_risk": 0.208764,
+      "mean_exposure_reduction_pct": 23.9668,
+      "median_exposure_reduction_pct": 9.5988,
+      "mean_time_overhead_pct": 6.3315,
+      "maximum_time_overhead_pct": 29.3413,
+      "guardrail_applied_pct": 30.0,
+      "trips_with_lower_exposure_pct": 57.0,
+      "pareto_success_under_30pct_detour_pct": 57.0
+    },
+    {
+      "method": "shortest_path",
+      "lambda": 8.0,
+      "trips": 100,
+      "mean_duration_min": 20.9793,
+      "mean_risk": 0.294596,
+      "mean_exposure_reduction_pct": 0.0,
+      "median_exposure_reduction_pct": -0.0,
+      "mean_time_overhead_pct": 0.0,
+      "maximum_time_overhead_pct": 0.0,
+      "guardrail_applied_pct": 0.0,
+      "trips_with_lower_exposure_pct": 0.0,
+      "pareto_success_under_30pct_detour_pct": 0.0
+    }
+  ],
+  "paired_objective_fuzzy_vs_linear": [
+    {
+      "lambda": 8.0,
+      "pairs": 100,
+      "objective_fuzzy_lower_exposure": 11,
+      "objective_fuzzy_higher_exposure": 5,
+      "same_exposure": 84,
+      "mean_exposure_improvement_vs_linear_pct": -1.6041,
+      "median_exposure_improvement_vs_linear_pct": 0.0,
+      "mean_time_change_vs_linear_pct": 0.8819,
+      "exact_two_sided_sign_test_p": 0.210114
+    }
+  ],
+  "independent_paired_effects_with_95pct_bootstrap_ci": [
+    {
+      "lambda": 8.0,
+      "comparison": "objective_fuzzy_vs_shortest_path",
+      "pairs": 100,
+      "raw_total_exposure_change_pct": {
+        "mean": -14.60172,
+        "ci95_low": -18.430659,
+        "ci95_high": -11.003858
+      },
+      "paired_standardized_effect_dz": 0.763733,
+      "maximum_raw_hazard_change": {
+        "mean": -0.060231,
+        "ci95_low": -0.100071,
+        "ci95_high": -0.026793
+      },
+      "high_risk_zone_time_change_percentage_points": {
+        "mean": -11.380106,
+        "ci95_low": -14.260809,
+        "ci95_high": -8.713899
+      }
+    },
+    {
+      "lambda": 8.0,
+      "comparison": "objective_fuzzy_vs_objective_weight",
+      "pairs": 100,
+      "raw_total_exposure_change_pct": {
+        "mean": 0.617534,
+        "ci95_low": -0.851741,
+        "ci95_high": 2.454658
+      },
+      "paired_standardized_effect_dz": -0.072005,
+      "maximum_raw_hazard_change": {
+        "mean": -0.000352,
+        "ci95_low": -0.000879,
+        "ci95_high": 0.0
+      },
+      "high_risk_zone_time_change_percentage_points": {
+        "mean": -0.224994,
+        "ci95_low": -1.066706,
+        "ci95_high": 0.6977
+      }
+    }
+  ],
+  "robustness_analysis_lambda": 8.0,
+  "held_out_location_evaluation": {
+    "design": "20% deterministic spatial cells hidden during route selection",
+    "holdout_fraction": 0.2,
+    "pairs": 100,
+    "route_changed_pct": 49.0,
+    "mean_path_jaccard": 0.778943,
+    "full_data_raw_exposure_change_pct": {
+      "mean": 6.221973,
+      "ci95_low": 3.812269,
+      "ci95_high": 8.854888
+    }
+  },
+  "input_perturbation_stability": {
+    "perturbation": "independent uniform +/- 0.025 per raw hazard",
+    "trials": 2,
+    "route_comparisons": 200,
+    "route_changed_pct": 16.0,
+    "mean_path_jaccard": 0.961224,
+    "full_data_raw_exposure_change_pct": {
+      "mean": -0.706967,
+      "ci95_low": -1.422,
+      "ci95_high": -0.157389
+    }
+  },
+  "leave_one_hazard_out_ablation": [
+    {
+      "removed_hazard": "flood",
+      "pairs": 100,
+      "route_changed_pct": 62.0,
+      "mean_full_raw_exposure_change_pct": 32.7967,
+      "mean_removed_hazard_exposure_change_pct": 92.561
+    },
+    {
+      "removed_hazard": "landslide",
+      "pairs": 100,
+      "route_changed_pct": 16.0,
+      "mean_full_raw_exposure_change_pct": 0.5324,
+      "mean_removed_hazard_exposure_change_pct": 7.3512
+    },
+    {
+      "removed_hazard": "elephant",
+      "pairs": 100,
+      "route_changed_pct": 2.0,
+      "mean_full_raw_exposure_change_pct": -0.2212,
+      "mean_removed_hazard_exposure_change_pct": 0.9113
+    },
+    {
+      "removed_hazard": "buffalo",
+      "pairs": 100,
+      "route_changed_pct": 0.0,
+      "mean_full_raw_exposure_change_pct": 0.0,
+      "mean_removed_hazard_exposure_change_pct": 0.0
+    },
+    {
+      "removed_hazard": "deer",
+      "pairs": 100,
+      "route_changed_pct": 4.0,
+      "mean_full_raw_exposure_change_pct": 0.0851,
+      "mean_removed_hazard_exposure_change_pct": 0.4939
+    },
+    {
+      "removed_hazard": "wildboar",
+      "pairs": 100,
+      "route_changed_pct": 1.0,
+      "mean_full_raw_exposure_change_pct": 0.0648,
+      "mean_removed_hazard_exposure_change_pct": -0.2374
+    }
+  ],
+  "runtime_seconds": 1260.919
+}

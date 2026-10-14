@@ -329,44 +329,40 @@ Frontend displays predictions and optimized routes.
 
 ---
 
-# Component 4 — Smart Route Optimization System
+# Component 4 — Objective Multi-Hazard Route Decision Model
 
 ## Problem Statement
 
-Drivers in Sri Lanka face issues such as:
-
-* Heavy traffic congestion
-* Unsafe roads
-* Flood-prone routes
-* Slippery areas
-* High fuel consumption
-
-Existing map applications do not combine all these risk factors together.
+Flood/landslide and wildlife detection identify where hazards may exist, but
+detection alone does not tell a traveller which road to take when several
+hazards occur together. This is a multi-criteria decision problem with a
+travel-time versus exposure tradeoff.
 
 ---
 
 ## Solution
 
-The Smart Route Optimization System calculates safer and more efficient routes by combining:
+The route component combines six normalized signals — flood, landslide,
+elephant, buffalo, deer and wild boar — using objective CRITIC weights and a
+provably monotonic hierarchical fuzzy operator. Risk-aware A-star then chooses
+a route using cost = travel_time × (1 + lambda × risk).
 
-* Traffic conditions
-* Flood risks
-* Slippery areas
-* Wildlife movement risks
-* Fuel optimization
-
-The system dynamically recommends the best route.
+The API enforces a 30% travel-time detour guardrail and compares the proposed
+model with a fastest-route baseline and an objective linear baseline.
 
 ---
 
 ## Features
 
-* Smart route recommendations
-* Safety-aware navigation
-* Traffic-aware routing
-* Flood avoidance routing
-* Fuel-efficient routing
-* Real-time map visualization
+* Objective weights without questionnaire dependency
+* Monotonic six-hazard fuzzy risk
+* Real 73,603-node Gampaha road graph
+* Three-method paired route comparison
+* Persistent live spatial hazard-update endpoint with automatic app refresh
+* Route-specific evidence-quality warnings
+* Name-based Gampaha town/road search and reverse-named map selection
+* Explicit same-path handling when Risk-Aware and Fastest are identical
+* Reproducible 100-OD benchmark with independent metrics and ablation
 
 ---
 
@@ -374,23 +370,26 @@ The system dynamically recommends the best route.
 
 ### Step 1
 
-User selects source and destination.
+User searches origin/destination names or selects map points, then chooses a
+method and risk preference.
 
 ### Step 2
 
-System retrieves map and traffic data.
+The API snaps both points to the real road graph and reads six edge hazards.
 
 ### Step 3
 
-Risk analysis engine evaluates route conditions.
+CRITIC weighting and the monotonic fuzzy hierarchy calculate edge risk.
 
 ### Step 4
 
-Optimization engine selects best route.
+Risk-aware A-star chooses the lowest-cost route within the detour guardrail.
 
 ### Step 5
 
-Frontend displays safest and most efficient routes.
+The map displays the route, risk sections, hazard profile, evidence quality and
+comparison with both baselines. An identical Risk-Aware/Fastest path is labelled
+as one shared path instead of being presented as a false alternative.
 
 ---
 

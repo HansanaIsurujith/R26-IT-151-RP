@@ -6,3 +6,5 @@
 *.sbn
 *.cpg
 backend/Flood-Landslide/shp/
+.env
+backend/Route-Optimization/network/gampaha_road_network_with_hazards.graphml

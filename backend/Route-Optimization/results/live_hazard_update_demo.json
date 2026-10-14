@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-08-30T11:33:31.049207+00:00",
+  "scope": "Reproducible API integration demonstration using a simulated detector payload; not evidence of a deployed teammate detector connection.",
+  "sequence": [
+    "calculate routes",
+    "POST /hazards/update",
+    "confirm hazard_version increment",
+    "recalculate routes",
+    "compare risk and path outcome"
+  ],
+  "detector_payload": {
+    "coordinate": {
+      "latitude": 7.0967291,
+      "longitude": 80.0407937
+    },
+    "radius_km": 2.0,
+    "hazards": {
+      "flood": 1.0,
+      "landslide": 1.0
+    },
+    "source": "reproducible_simulated_detector_demo",
+    "observed_at": "2026-08-30T11:33:29.331163+00:00"
+  },
+  "update_response": {
+    "status": "updated",
+    "hazard_version": 2,
+    "updated_edges": 2709,
+    "radius_km": 2.0,
+    "source": "reproducible_simulated_detector_demo",
+    "observed_at": "2026-08-30T11:33:29.331163+00:00",
+    "values": {
+      "flood": 1.0,
+      "landslide": 1.0
+    }
+  },
+  "fastest_before": {
+    "hazard_version": 1,
+    "method": "shortest_path",
+    "duration_min": 15.0,
+    "risk_score": 0.5687,
+    "risk_exposure": 8.5332,
+    "maximum_segment_risk": 1.0,
+    "same_as_fastest": true,
+    "node_count": 189,
+    "route_id": "cf523c23-bbdc-432d-9ac2-a837c0df25e8"
+  },
+  "fastest_after": {
+    "hazard_version": 2,
+    "method": "shortest_path",
+    "duration_min": 15.0,
+    "risk_score": 0.6625,
+    "risk_exposure": 9.9397,
+    "maximum_segment_risk": 1.0,
+    "same_as_fastest": true,
+    "node_count": 189,
+    "route_id": "28b11428-ed1c-4c09-b097-0004da580546"
+  },
+  "smart_safe_before": {
+    "hazard_version": 1,
+    "method": "objective_fuzzy",
+    "duration_min": 16.42,
+    "risk_score": 0.3,
+    "risk_exposure": 4.9265,
+    "maximum_segment_risk": 1.0,
+    "same_as_fastest": false,
+    "node_count": 167,
+    "route_id": "ebbfeb78-87d1-4aa3-91c8-08c90f67d14b"
+  },
+  "smart_safe_after": {
+    "hazard_version": 2,
+    "method": "objective_fuzzy",
+    "duration_min": 15.29,
+    "risk_score": 0.4696,
+    "risk_exposure": 7.1802,
+    "maximum_segment_risk": 1.0,
+    "same_as_fastest": false,
+    "node_count": 167,
+    "route_id": "339a098d-260a-47dc-86b5-be761b6b4714"
+  },
+  "verified": {
+    "hazard_version_incremented": true,
+    "same_fastest_path_risk_changed": true,
+    "smart_safe_path_changed_when_beneficial": true
+  }
+}
